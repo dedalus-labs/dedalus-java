@@ -27,9 +27,9 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/stainless-sdks/dedalus-java.git")
-                    developerConnection.set("scm:git:git://github.com/stainless-sdks/dedalus-java.git")
-                    url.set("https://github.com/stainless-sdks/dedalus-java")
+                    connection.set("scm:git:git://github.com/dedalus-labs/dedalus-java.git")
+                    developerConnection.set("scm:git:git://github.com/dedalus-labs/dedalus-java.git")
+                    url.set("https://github.com/dedalus-labs/dedalus-java")
                 }
 
                 versionMapping {
