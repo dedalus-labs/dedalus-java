@@ -4,7 +4,6 @@ package com.dedalus.api.client
 
 import com.dedalus.api.core.ClientOptions
 import com.dedalus.api.services.async.MachineServiceAsync
-import com.dedalus.api.services.async.UsageServiceAsync
 import java.util.function.Consumer
 
 /**
@@ -43,8 +42,6 @@ interface DedalusClientAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DedalusClientAsync
 
-    fun usage(): UsageServiceAsync
-
     fun machines(): MachineServiceAsync
 
     /**
@@ -73,8 +70,6 @@ interface DedalusClientAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DedalusClientAsync.WithRawResponse
-
-        fun usage(): UsageServiceAsync.WithRawResponse
 
         fun machines(): MachineServiceAsync.WithRawResponse
     }

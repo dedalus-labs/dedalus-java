@@ -27,7 +27,7 @@ internal class SshServiceTest {
         val sshSession =
             sshService.create(
                 SshCreateParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .sshSessionCreateParams(
                         SshSessionCreateParams.builder().publicKey("public_key").build()
                     )
@@ -48,7 +48,10 @@ internal class SshServiceTest {
 
         val sshSession =
             sshService.retrieve(
-                SshRetrieveParams.builder().machineId("dm-3").sessionId("session_id").build()
+                SshRetrieveParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .sessionId("session_id")
+                    .build()
             )
 
         sshSession.validate()
@@ -63,7 +66,10 @@ internal class SshServiceTest {
                 .build()
         val sshService = client.machines().ssh()
 
-        val page = sshService.list(SshListParams.builder().machineId("dm-3").build())
+        val page =
+            sshService.list(
+                SshListParams.builder().machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c").build()
+            )
 
         page.response().validate()
     }
@@ -79,7 +85,10 @@ internal class SshServiceTest {
 
         val sshSession =
             sshService.delete(
-                SshDeleteParams.builder().machineId("dm-3").sessionId("session_id").build()
+                SshDeleteParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .sessionId("session_id")
+                    .build()
             )
 
         sshSession.validate()

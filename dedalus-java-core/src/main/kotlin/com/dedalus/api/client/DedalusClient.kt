@@ -4,7 +4,6 @@ package com.dedalus.api.client
 
 import com.dedalus.api.core.ClientOptions
 import com.dedalus.api.services.blocking.MachineService
-import com.dedalus.api.services.blocking.UsageService
 import java.util.function.Consumer
 
 /**
@@ -43,8 +42,6 @@ interface DedalusClient {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DedalusClient
 
-    fun usage(): UsageService
-
     fun machines(): MachineService
 
     /**
@@ -69,8 +66,6 @@ interface DedalusClient {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): DedalusClient.WithRawResponse
-
-        fun usage(): UsageService.WithRawResponse
 
         fun machines(): MachineService.WithRawResponse
     }

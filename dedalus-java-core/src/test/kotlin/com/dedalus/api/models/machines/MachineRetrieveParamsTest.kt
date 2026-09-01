@@ -9,14 +9,17 @@ internal class MachineRetrieveParamsTest {
 
     @Test
     fun create() {
-        MachineRetrieveParams.builder().machineId("dm-3").build()
+        MachineRetrieveParams.builder().machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c").build()
     }
 
     @Test
     fun pathParams() {
-        val params = MachineRetrieveParams.builder().machineId("dm-3").build()
+        val params =
+            MachineRetrieveParams.builder()
+                .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                .build()
 
-        assertThat(params._pathParam(0)).isEqualTo("dm-3")
+        assertThat(params._pathParam(0)).isEqualTo("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
