@@ -72,10 +72,10 @@ internal class ErrorHandlingTest {
             assertThrows<BadRequestException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -99,10 +99,10 @@ internal class ErrorHandlingTest {
             assertThrows<BadRequestException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -126,10 +126,10 @@ internal class ErrorHandlingTest {
             assertThrows<UnauthorizedException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -153,10 +153,10 @@ internal class ErrorHandlingTest {
             assertThrows<UnauthorizedException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -180,10 +180,10 @@ internal class ErrorHandlingTest {
             assertThrows<PermissionDeniedException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -207,10 +207,10 @@ internal class ErrorHandlingTest {
             assertThrows<PermissionDeniedException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -234,10 +234,10 @@ internal class ErrorHandlingTest {
             assertThrows<NotFoundException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -261,10 +261,10 @@ internal class ErrorHandlingTest {
             assertThrows<NotFoundException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -288,10 +288,10 @@ internal class ErrorHandlingTest {
             assertThrows<UnprocessableEntityException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -315,10 +315,10 @@ internal class ErrorHandlingTest {
             assertThrows<UnprocessableEntityException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -342,10 +342,10 @@ internal class ErrorHandlingTest {
             assertThrows<RateLimitException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -369,10 +369,10 @@ internal class ErrorHandlingTest {
             assertThrows<RateLimitException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -396,10 +396,10 @@ internal class ErrorHandlingTest {
             assertThrows<InternalServerException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -423,10 +423,10 @@ internal class ErrorHandlingTest {
             assertThrows<InternalServerException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -450,10 +450,10 @@ internal class ErrorHandlingTest {
             assertThrows<UnexpectedStatusCodeException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -477,10 +477,10 @@ internal class ErrorHandlingTest {
             assertThrows<UnexpectedStatusCodeException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }
@@ -502,10 +502,10 @@ internal class ErrorHandlingTest {
             assertThrows<DedalusException> {
                 machineService.create(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
             }

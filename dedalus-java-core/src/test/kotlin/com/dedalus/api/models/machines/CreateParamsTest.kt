@@ -13,16 +13,16 @@ internal class CreateParamsTest {
     fun create() {
         val createParams =
             CreateParams.builder()
-                .memoryMiB(0L)
-                .storageGiB(0L)
-                .vcpu(0.0)
                 .autosleep("autosleep")
+                .memoryMiB(1L)
+                .storageGiB(1L)
+                .vcpu(1.0)
                 .build()
 
-        assertThat(createParams.memoryMiB()).isEqualTo(0L)
-        assertThat(createParams.storageGiB()).isEqualTo(0L)
-        assertThat(createParams.vcpu()).isEqualTo(0.0)
         assertThat(createParams.autosleep()).contains("autosleep")
+        assertThat(createParams.memoryMiB()).contains(1L)
+        assertThat(createParams.storageGiB()).contains(1L)
+        assertThat(createParams.vcpu()).contains(1.0)
     }
 
     @Test
@@ -30,10 +30,10 @@ internal class CreateParamsTest {
         val jsonMapper = jsonMapper()
         val createParams =
             CreateParams.builder()
-                .memoryMiB(0L)
-                .storageGiB(0L)
-                .vcpu(0.0)
                 .autosleep("autosleep")
+                .memoryMiB(1L)
+                .storageGiB(1L)
+                .vcpu(1.0)
                 .build()
 
         val roundtrippedCreateParams =

@@ -64,11 +64,7 @@ import com.dedalus.api.models.machines.Machine;
 // Or configures using the `DEDALUS_API_KEY`, `DEDALUS_X_API_KEY`, `DEDALUS_ORG_ID` and `DEDALUS_BASE_URL` environment variables
 DedalusClient client = DedalusOkHttpClient.fromEnv();
 
-CreateParams params = CreateParams.builder()
-    .memoryMiB(0L)
-    .storageGiB(0L)
-    .vcpu(0.0)
-    .build();
+CreateParams params = CreateParams.builder().build();
 Machine machine = client.machines().create(params);
 ```
 
@@ -169,11 +165,7 @@ import java.util.concurrent.CompletableFuture;
 // Or configures using the `DEDALUS_API_KEY`, `DEDALUS_X_API_KEY`, `DEDALUS_ORG_ID` and `DEDALUS_BASE_URL` environment variables
 DedalusClient client = DedalusOkHttpClient.fromEnv();
 
-CreateParams params = CreateParams.builder()
-    .memoryMiB(0L)
-    .storageGiB(0L)
-    .vcpu(0.0)
-    .build();
+CreateParams params = CreateParams.builder().build();
 CompletableFuture<Machine> machine = client.async().machines().create(params);
 ```
 
@@ -190,107 +182,11 @@ import java.util.concurrent.CompletableFuture;
 // Or configures using the `DEDALUS_API_KEY`, `DEDALUS_X_API_KEY`, `DEDALUS_ORG_ID` and `DEDALUS_BASE_URL` environment variables
 DedalusClientAsync client = DedalusOkHttpClientAsync.fromEnv();
 
-CreateParams params = CreateParams.builder()
-    .memoryMiB(0L)
-    .storageGiB(0L)
-    .vcpu(0.0)
-    .build();
+CreateParams params = CreateParams.builder().build();
 CompletableFuture<Machine> machine = client.machines().create(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
-
-## Streaming
-
-The SDK defines methods that return response "chunk" streams, where each chunk can be individually processed as soon as it arrives instead of waiting on the full response. Streaming methods generally correspond to [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) or [JSONL](https://jsonlines.org) responses.
-
-Some of these methods may have streaming and non-streaming variants, but a streaming method will always have a `Streaming` suffix in its name, even if it doesn't have a non-streaming variant.
-
-These streaming methods return [`StreamResponse`](dedalus-java-core/src/main/kotlin/com/dedalus/api/core/http/StreamResponse.kt) for synchronous clients:
-
-```java
-import com.dedalus.api.core.http.StreamResponse;
-import com.dedalus.api.models.machines.Machine;
-
-try (StreamResponse<Machine> streamResponse = client.machines().watchStreaming(params)) {
-    streamResponse.stream().forEach(chunk -> {
-        System.out.println(chunk);
-    });
-    System.out.println("No more chunks!");
-}
-```
-
-Or [`AsyncStreamResponse`](dedalus-java-core/src/main/kotlin/com/dedalus/api/core/http/AsyncStreamResponse.kt) for asynchronous clients:
-
-```java
-import com.dedalus.api.core.http.AsyncStreamResponse;
-import com.dedalus.api.models.machines.Machine;
-import java.util.Optional;
-
-client.async().machines().watchStreaming(params).subscribe(chunk -> {
-    System.out.println(chunk);
-});
-
-// If you need to handle errors or completion of the stream
-client.async().machines().watchStreaming(params).subscribe(new AsyncStreamResponse.Handler<>() {
-    @Override
-    public void onNext(Machine chunk) {
-        System.out.println(chunk);
-    }
-
-    @Override
-    public void onComplete(Optional<Throwable> error) {
-        if (error.isPresent()) {
-            System.out.println("Something went wrong!");
-            throw new RuntimeException(error.get());
-        } else {
-            System.out.println("No more chunks!");
-        }
-    }
-});
-
-// Or use futures
-client.async().machines().watchStreaming(params)
-    .subscribe(chunk -> {
-        System.out.println(chunk);
-    })
-    .onCompleteFuture()
-    .whenComplete((unused, error) -> {
-        if (error != null) {
-            System.out.println("Something went wrong!");
-            throw new RuntimeException(error);
-        } else {
-            System.out.println("No more chunks!");
-        }
-    });
-```
-
-Async streaming uses a dedicated per-client cached thread pool [`Executor`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Executor.html) to stream without blocking the current thread. This default is suitable for most purposes.
-
-To use a different `Executor`, configure the subscription using the `executor` parameter:
-
-```java
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-Executor executor = Executors.newFixedThreadPool(4);
-client.async().machines().watchStreaming(params).subscribe(
-    chunk -> System.out.println(chunk), executor
-);
-```
-
-Or configure the client globally using the `streamHandlerExecutor` method:
-
-```java
-import com.dedalus.api.client.DedalusClient;
-import com.dedalus.api.client.okhttp.DedalusOkHttpClient;
-import java.util.concurrent.Executors;
-
-DedalusClient client = DedalusOkHttpClient.builder()
-    .fromEnv()
-    .streamHandlerExecutor(Executors.newFixedThreadPool(4))
-    .build();
-```
 
 ## Raw responses
 
@@ -304,11 +200,7 @@ import com.dedalus.api.core.http.HttpResponseFor;
 import com.dedalus.api.models.machines.CreateParams;
 import com.dedalus.api.models.machines.Machine;
 
-CreateParams params = CreateParams.builder()
-    .memoryMiB(0L)
-    .storageGiB(0L)
-    .vcpu(0.0)
-    .build();
+CreateParams params = CreateParams.builder().build();
 HttpResponseFor<Machine> machine = client.machines().withRawResponse().create(params);
 
 int statusCode = machine.statusCode();
@@ -339,8 +231,6 @@ The SDK throws custom unchecked exception types:
   | 429    | [`RateLimitException`](dedalus-java-core/src/main/kotlin/com/dedalus/api/errors/RateLimitException.kt)                       |
   | 5xx    | [`InternalServerException`](dedalus-java-core/src/main/kotlin/com/dedalus/api/errors/InternalServerException.kt)             |
   | others | [`UnexpectedStatusCodeException`](dedalus-java-core/src/main/kotlin/com/dedalus/api/errors/UnexpectedStatusCodeException.kt) |
-
-  [`SseException`](dedalus-java-core/src/main/kotlin/com/dedalus/api/errors/SseException.kt) is thrown for errors encountered during [SSE streaming](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) after a successful initial HTTP response.
 
 - [`DedalusIoException`](dedalus-java-core/src/main/kotlin/com/dedalus/api/errors/DedalusIoException.kt): I/O networking errors.
 
@@ -690,11 +580,7 @@ import com.dedalus.api.models.machines.CreateParams;
 import com.dedalus.api.models.machines.MachineCreateParams;
 
 MachineCreateParams params = MachineCreateParams.builder()
-    .createParams(CreateParams.builder()
-        .memoryMiB(0L)
-        .storageGiB(0L)
-        .vcpu(0.0)
-        .build())
+    .createParams(CreateParams.builder().build())
     .build();
 ```
 
@@ -743,16 +629,11 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](dedalus-
 
 ```java
 import com.dedalus.api.core.JsonMissing;
-import com.dedalus.api.models.machines.CreateParams;
 import com.dedalus.api.models.machines.MachineCreateParams;
+import com.dedalus.api.models.machines.MachineRetrieveParams;
 
-MachineCreateParams params = MachineCreateParams.builder()
-    .createParams(CreateParams.builder()
-        .memoryMiB(0L)
-        .storageGiB(0L)
-        .vcpu(0.0)
-        .build())
-    .memoryMiB(JsonMissing.of())
+MachineCreateParams params = MachineRetrieveParams.builder()
+    .machineId(JsonMissing.of())
     .build();
 ```
 

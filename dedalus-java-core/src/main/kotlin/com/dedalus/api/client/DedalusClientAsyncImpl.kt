@@ -6,8 +6,6 @@ import com.dedalus.api.core.ClientOptions
 import com.dedalus.api.core.getPackageVersion
 import com.dedalus.api.services.async.MachineServiceAsync
 import com.dedalus.api.services.async.MachineServiceAsyncImpl
-import com.dedalus.api.services.async.UsageServiceAsync
-import com.dedalus.api.services.async.UsageServiceAsyncImpl
 import java.util.function.Consumer
 
 class DedalusClientAsyncImpl(private val clientOptions: ClientOptions) : DedalusClientAsync {
@@ -27,10 +25,6 @@ class DedalusClientAsyncImpl(private val clientOptions: ClientOptions) : Dedalus
         WithRawResponseImpl(clientOptions)
     }
 
-    private val usage: UsageServiceAsync by lazy {
-        UsageServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
     private val machines: MachineServiceAsync by lazy {
         MachineServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -42,18 +36,12 @@ class DedalusClientAsyncImpl(private val clientOptions: ClientOptions) : Dedalus
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DedalusClientAsync =
         DedalusClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun usage(): UsageServiceAsync = usage
-
     override fun machines(): MachineServiceAsync = machines
 
     override fun close() = clientOptions.close()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         DedalusClientAsync.WithRawResponse {
-
-        private val usage: UsageServiceAsync.WithRawResponse by lazy {
-            UsageServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val machines: MachineServiceAsync.WithRawResponse by lazy {
             MachineServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -65,8 +53,6 @@ class DedalusClientAsyncImpl(private val clientOptions: ClientOptions) : Dedalus
             DedalusClientAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun usage(): UsageServiceAsync.WithRawResponse = usage
 
         override fun machines(): MachineServiceAsync.WithRawResponse = machines
     }

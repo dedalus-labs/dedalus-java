@@ -10,21 +10,31 @@ internal class SshListParamsTest {
 
     @Test
     fun create() {
-        SshListParams.builder().machineId("dm-3").cursor("cursor").limit(0L).build()
+        SshListParams.builder()
+            .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+            .cursor("cursor")
+            .limit(0L)
+            .build()
     }
 
     @Test
     fun pathParams() {
-        val params = SshListParams.builder().machineId("dm-3").build()
+        val params =
+            SshListParams.builder().machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("dm-3")
+        assertThat(params._pathParam(0)).isEqualTo("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
 
     @Test
     fun queryParams() {
-        val params = SshListParams.builder().machineId("dm-3").cursor("cursor").limit(0L).build()
+        val params =
+            SshListParams.builder()
+                .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                .cursor("cursor")
+                .limit(0L)
+                .build()
 
         val queryParams = params._queryParams()
 
@@ -34,7 +44,8 @@ internal class SshListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params = SshListParams.builder().machineId("dm-3").build()
+        val params =
+            SshListParams.builder().machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c").build()
 
         val queryParams = params._queryParams()
 

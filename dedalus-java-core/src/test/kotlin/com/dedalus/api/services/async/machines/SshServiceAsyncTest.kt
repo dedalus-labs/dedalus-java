@@ -27,7 +27,7 @@ internal class SshServiceAsyncTest {
         val sshSessionFuture =
             sshServiceAsync.create(
                 SshCreateParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .sshSessionCreateParams(
                         SshSessionCreateParams.builder().publicKey("public_key").build()
                     )
@@ -49,7 +49,10 @@ internal class SshServiceAsyncTest {
 
         val sshSessionFuture =
             sshServiceAsync.retrieve(
-                SshRetrieveParams.builder().machineId("dm-3").sessionId("session_id").build()
+                SshRetrieveParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .sessionId("session_id")
+                    .build()
             )
 
         val sshSession = sshSessionFuture.get()
@@ -65,7 +68,10 @@ internal class SshServiceAsyncTest {
                 .build()
         val sshServiceAsync = client.machines().ssh()
 
-        val pageFuture = sshServiceAsync.list(SshListParams.builder().machineId("dm-3").build())
+        val pageFuture =
+            sshServiceAsync.list(
+                SshListParams.builder().machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c").build()
+            )
 
         val page = pageFuture.get()
         page.response().validate()
@@ -82,7 +88,10 @@ internal class SshServiceAsyncTest {
 
         val sshSessionFuture =
             sshServiceAsync.delete(
-                SshDeleteParams.builder().machineId("dm-3").sessionId("session_id").build()
+                SshDeleteParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .sessionId("session_id")
+                    .build()
             )
 
         val sshSession = sshSessionFuture.get()

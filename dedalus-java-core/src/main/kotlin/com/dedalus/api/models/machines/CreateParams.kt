@@ -6,7 +6,6 @@ import com.dedalus.api.core.ExcludeMissing
 import com.dedalus.api.core.JsonField
 import com.dedalus.api.core.JsonMissing
 import com.dedalus.api.core.JsonValue
-import com.dedalus.api.core.checkRequired
 import com.dedalus.api.errors.DedalusInvalidDataException
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -19,44 +18,20 @@ import java.util.Optional
 class CreateParams
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val autosleep: JsonField<String>,
     private val memoryMiB: JsonField<Long>,
     private val storageGiB: JsonField<Long>,
     private val vcpu: JsonField<Double>,
-    private val autosleep: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
+        @JsonProperty("autosleep") @ExcludeMissing autosleep: JsonField<String> = JsonMissing.of(),
         @JsonProperty("memory_mib") @ExcludeMissing memoryMiB: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("storage_gib") @ExcludeMissing storageGiB: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("vcpu") @ExcludeMissing vcpu: JsonField<Double> = JsonMissing.of(),
-        @JsonProperty("autosleep") @ExcludeMissing autosleep: JsonField<String> = JsonMissing.of(),
-    ) : this(memoryMiB, storageGiB, vcpu, autosleep, mutableMapOf())
-
-    /**
-     * Memory in MiB.
-     *
-     * @throws DedalusInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun memoryMiB(): Long = memoryMiB.getRequired("memory_mib")
-
-    /**
-     * Storage in GiB.
-     *
-     * @throws DedalusInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun storageGiB(): Long = storageGiB.getRequired("storage_gib")
-
-    /**
-     * CPU in vCPUs.
-     *
-     * @throws DedalusInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun vcpu(): Double = vcpu.getRequired("vcpu")
+    ) : this(autosleep, memoryMiB, storageGiB, vcpu, mutableMapOf())
 
     /**
      * Idle window before autosleep. Accepts fixed duration units like 30s, 30m, 2h, 7d3h4s, or
@@ -66,6 +41,37 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun autosleep(): Optional<String> = autosleep.getOptional("autosleep")
+
+    /**
+     * Memory in MiB.
+     *
+     * @throws DedalusInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun memoryMiB(): Optional<Long> = memoryMiB.getOptional("memory_mib")
+
+    /**
+     * Storage in GiB.
+     *
+     * @throws DedalusInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun storageGiB(): Optional<Long> = storageGiB.getOptional("storage_gib")
+
+    /**
+     * CPU in vCPUs.
+     *
+     * @throws DedalusInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun vcpu(): Optional<Double> = vcpu.getOptional("vcpu")
+
+    /**
+     * Returns the raw JSON value of [autosleep].
+     *
+     * Unlike [autosleep], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("autosleep") @ExcludeMissing fun _autosleep(): JsonField<String> = autosleep
 
     /**
      * Returns the raw JSON value of [memoryMiB].
@@ -88,13 +94,6 @@ private constructor(
      */
     @JsonProperty("vcpu") @ExcludeMissing fun _vcpu(): JsonField<Double> = vcpu
 
-    /**
-     * Returns the raw JSON value of [autosleep].
-     *
-     * Unlike [autosleep], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("autosleep") @ExcludeMissing fun _autosleep(): JsonField<String> = autosleep
-
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -109,36 +108,42 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [CreateParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .memoryMiB()
-         * .storageGiB()
-         * .vcpu()
-         * ```
-         */
+        /** Returns a mutable builder for constructing an instance of [CreateParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [CreateParams]. */
     class Builder internal constructor() {
 
-        private var memoryMiB: JsonField<Long>? = null
-        private var storageGiB: JsonField<Long>? = null
-        private var vcpu: JsonField<Double>? = null
         private var autosleep: JsonField<String> = JsonMissing.of()
+        private var memoryMiB: JsonField<Long> = JsonMissing.of()
+        private var storageGiB: JsonField<Long> = JsonMissing.of()
+        private var vcpu: JsonField<Double> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(createParams: CreateParams) = apply {
+            autosleep = createParams.autosleep
             memoryMiB = createParams.memoryMiB
             storageGiB = createParams.storageGiB
             vcpu = createParams.vcpu
-            autosleep = createParams.autosleep
             additionalProperties = createParams.additionalProperties.toMutableMap()
         }
+
+        /**
+         * Idle window before autosleep. Accepts fixed duration units like 30s, 30m, 2h, 7d3h4s, or
+         * 1w3d, raw seconds ("1800"), or never to disable.
+         */
+        fun autosleep(autosleep: String) = autosleep(JsonField.of(autosleep))
+
+        /**
+         * Sets [Builder.autosleep] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.autosleep] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun autosleep(autosleep: JsonField<String>) = apply { this.autosleep = autosleep }
 
         /** Memory in MiB. */
         fun memoryMiB(memoryMiB: Long) = memoryMiB(JsonField.of(memoryMiB))
@@ -173,21 +178,6 @@ private constructor(
          */
         fun vcpu(vcpu: JsonField<Double>) = apply { this.vcpu = vcpu }
 
-        /**
-         * Idle window before autosleep. Accepts fixed duration units like 30s, 30m, 2h, 7d3h4s, or
-         * 1w3d, raw seconds ("1800"), or never to disable.
-         */
-        fun autosleep(autosleep: String) = autosleep(JsonField.of(autosleep))
-
-        /**
-         * Sets [Builder.autosleep] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.autosleep] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun autosleep(autosleep: JsonField<String>) = apply { this.autosleep = autosleep }
-
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -211,22 +201,13 @@ private constructor(
          * Returns an immutable instance of [CreateParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .memoryMiB()
-         * .storageGiB()
-         * .vcpu()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): CreateParams =
             CreateParams(
-                checkRequired("memoryMiB", memoryMiB),
-                checkRequired("storageGiB", storageGiB),
-                checkRequired("vcpu", vcpu),
                 autosleep,
+                memoryMiB,
+                storageGiB,
+                vcpu,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -246,10 +227,10 @@ private constructor(
             return@apply
         }
 
+        autosleep()
         memoryMiB()
         storageGiB()
         vcpu()
-        autosleep()
         validated = true
     }
 
@@ -268,10 +249,10 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (memoryMiB.asKnown().isPresent) 1 else 0) +
+        (if (autosleep.asKnown().isPresent) 1 else 0) +
+            (if (memoryMiB.asKnown().isPresent) 1 else 0) +
             (if (storageGiB.asKnown().isPresent) 1 else 0) +
-            (if (vcpu.asKnown().isPresent) 1 else 0) +
-            (if (autosleep.asKnown().isPresent) 1 else 0)
+            (if (vcpu.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -279,19 +260,19 @@ private constructor(
         }
 
         return other is CreateParams &&
+            autosleep == other.autosleep &&
             memoryMiB == other.memoryMiB &&
             storageGiB == other.storageGiB &&
             vcpu == other.vcpu &&
-            autosleep == other.autosleep &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(memoryMiB, storageGiB, vcpu, autosleep, additionalProperties)
+        Objects.hash(autosleep, memoryMiB, storageGiB, vcpu, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateParams{memoryMiB=$memoryMiB, storageGiB=$storageGiB, vcpu=$vcpu, autosleep=$autosleep, additionalProperties=$additionalProperties}"
+        "CreateParams{autosleep=$autosleep, memoryMiB=$memoryMiB, storageGiB=$storageGiB, vcpu=$vcpu, additionalProperties=$additionalProperties}"
 }

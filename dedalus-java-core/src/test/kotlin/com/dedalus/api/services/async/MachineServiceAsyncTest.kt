@@ -10,7 +10,6 @@ import com.dedalus.api.models.machines.MachineRetrieveParams
 import com.dedalus.api.models.machines.MachineSleepParams
 import com.dedalus.api.models.machines.MachineUpdateParams
 import com.dedalus.api.models.machines.MachineWakeParams
-import com.dedalus.api.models.machines.MachineWatchParams
 import com.dedalus.api.models.machines.UpdateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,10 +29,10 @@ internal class MachineServiceAsyncTest {
         val machineFuture =
             machineServiceAsync.create(
                 CreateParams.builder()
-                    .memoryMiB(0L)
-                    .storageGiB(0L)
-                    .vcpu(0.0)
                     .autosleep("autosleep")
+                    .memoryMiB(1L)
+                    .storageGiB(1L)
+                    .vcpu(1.0)
                     .build()
             )
 
@@ -51,7 +50,11 @@ internal class MachineServiceAsyncTest {
         val machineServiceAsync = client.machines()
 
         val machineFuture =
-            machineServiceAsync.retrieve(MachineRetrieveParams.builder().machineId("dm-3").build())
+            machineServiceAsync.retrieve(
+                MachineRetrieveParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         val machine = machineFuture.get()
         machine.validate()
@@ -69,7 +72,7 @@ internal class MachineServiceAsyncTest {
         val machineFuture =
             machineServiceAsync.update(
                 MachineUpdateParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .updateParams(
                         UpdateParams.builder()
                             .autosleep("autosleep")
@@ -110,7 +113,11 @@ internal class MachineServiceAsyncTest {
         val machineServiceAsync = client.machines()
 
         val machineFuture =
-            machineServiceAsync.delete(MachineDeleteParams.builder().machineId("dm-3").build())
+            machineServiceAsync.delete(
+                MachineDeleteParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         val machine = machineFuture.get()
         machine.validate()
@@ -126,7 +133,11 @@ internal class MachineServiceAsyncTest {
         val machineServiceAsync = client.machines()
 
         val machineFuture =
-            machineServiceAsync.sleep(MachineSleepParams.builder().machineId("dm-3").build())
+            machineServiceAsync.sleep(
+                MachineSleepParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         val machine = machineFuture.get()
         machine.validate()
@@ -142,28 +153,13 @@ internal class MachineServiceAsyncTest {
         val machineServiceAsync = client.machines()
 
         val machineFuture =
-            machineServiceAsync.wake(MachineWakeParams.builder().machineId("dm-3").build())
+            machineServiceAsync.wake(
+                MachineWakeParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         val machine = machineFuture.get()
         machine.validate()
-    }
-
-    @Test
-    fun watchStreaming() {
-        val client =
-            DedalusOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val machineServiceAsync = client.machines()
-
-        val machineStreamResponse =
-            machineServiceAsync.watchStreaming(
-                MachineWatchParams.builder().machineId("dm-3").lastEventId("Last-Event-ID").build()
-            )
-
-        val onCompleteFuture =
-            machineStreamResponse.subscribe { machine -> machine.validate() }.onCompleteFuture()
-        onCompleteFuture.get()
     }
 }
