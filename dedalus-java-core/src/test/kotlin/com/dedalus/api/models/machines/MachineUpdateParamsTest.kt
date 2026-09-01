@@ -10,7 +10,7 @@ internal class MachineUpdateParamsTest {
     @Test
     fun create() {
         MachineUpdateParams.builder()
-            .machineId("dm-3")
+            .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
             .updateParams(
                 UpdateParams.builder()
                     .autosleep("autosleep")
@@ -26,11 +26,11 @@ internal class MachineUpdateParamsTest {
     fun pathParams() {
         val params =
             MachineUpdateParams.builder()
-                .machineId("dm-3")
+                .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                 .updateParams(UpdateParams.builder().build())
                 .build()
 
-        assertThat(params._pathParam(0)).isEqualTo("dm-3")
+        assertThat(params._pathParam(0)).isEqualTo("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -39,7 +39,7 @@ internal class MachineUpdateParamsTest {
     fun body() {
         val params =
             MachineUpdateParams.builder()
-                .machineId("dm-3")
+                .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                 .updateParams(
                     UpdateParams.builder()
                         .autosleep("autosleep")
@@ -67,7 +67,7 @@ internal class MachineUpdateParamsTest {
     fun bodyWithoutOptionalFields() {
         val params =
             MachineUpdateParams.builder()
-                .machineId("dm-3")
+                .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                 .updateParams(UpdateParams.builder().build())
                 .build()
 

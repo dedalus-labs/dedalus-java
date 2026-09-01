@@ -9,15 +9,21 @@ internal class ExecutionDeleteParamsTest {
 
     @Test
     fun create() {
-        ExecutionDeleteParams.builder().machineId("dm-3").executionId("execution_id").build()
+        ExecutionDeleteParams.builder()
+            .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+            .executionId("execution_id")
+            .build()
     }
 
     @Test
     fun pathParams() {
         val params =
-            ExecutionDeleteParams.builder().machineId("dm-3").executionId("execution_id").build()
+            ExecutionDeleteParams.builder()
+                .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                .executionId("execution_id")
+                .build()
 
-        assertThat(params._pathParam(0)).isEqualTo("dm-3")
+        assertThat(params._pathParam(0)).isEqualTo("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
         assertThat(params._pathParam(1)).isEqualTo("execution_id")
         // out-of-bound path param
         assertThat(params._pathParam(2)).isEqualTo("")

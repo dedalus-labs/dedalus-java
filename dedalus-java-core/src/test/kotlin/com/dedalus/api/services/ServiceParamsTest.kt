@@ -43,10 +43,10 @@ internal class ServiceParamsTest {
             MachineCreateParams.builder()
                 .createParams(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
                 .putAdditionalHeader("Secret-Header", "42")

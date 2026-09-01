@@ -12,10 +12,10 @@ internal class MachineCreateParamsTest {
         MachineCreateParams.builder()
             .createParams(
                 CreateParams.builder()
-                    .memoryMiB(0L)
-                    .storageGiB(0L)
-                    .vcpu(0.0)
                     .autosleep("autosleep")
+                    .memoryMiB(1L)
+                    .storageGiB(1L)
+                    .vcpu(1.0)
                     .build()
             )
             .build()
@@ -27,10 +27,10 @@ internal class MachineCreateParamsTest {
             MachineCreateParams.builder()
                 .createParams(
                     CreateParams.builder()
-                        .memoryMiB(0L)
-                        .storageGiB(0L)
-                        .vcpu(0.0)
                         .autosleep("autosleep")
+                        .memoryMiB(1L)
+                        .storageGiB(1L)
+                        .vcpu(1.0)
                         .build()
                 )
                 .build()
@@ -40,10 +40,10 @@ internal class MachineCreateParamsTest {
         assertThat(body)
             .isEqualTo(
                 CreateParams.builder()
-                    .memoryMiB(0L)
-                    .storageGiB(0L)
-                    .vcpu(0.0)
                     .autosleep("autosleep")
+                    .memoryMiB(1L)
+                    .storageGiB(1L)
+                    .vcpu(1.0)
                     .build()
             )
     }
@@ -51,13 +51,10 @@ internal class MachineCreateParamsTest {
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            MachineCreateParams.builder()
-                .createParams(CreateParams.builder().memoryMiB(0L).storageGiB(0L).vcpu(0.0).build())
-                .build()
+            MachineCreateParams.builder().createParams(CreateParams.builder().build()).build()
 
         val body = params._body()
 
-        assertThat(body)
-            .isEqualTo(CreateParams.builder().memoryMiB(0L).storageGiB(0L).vcpu(0.0).build())
+        assertThat(body).isEqualTo(CreateParams.builder().build())
     }
 }

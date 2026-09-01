@@ -29,7 +29,7 @@ internal class ExecutionServiceTest {
         val execution =
             executionService.create(
                 ExecutionCreateParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .executionCreateParams(
                         ExecutionCreateParams.builder()
                             .addCommand("string")
@@ -61,7 +61,7 @@ internal class ExecutionServiceTest {
         val execution =
             executionService.retrieve(
                 ExecutionRetrieveParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .executionId("execution_id")
                     .build()
             )
@@ -78,7 +78,12 @@ internal class ExecutionServiceTest {
                 .build()
         val executionService = client.machines().executions()
 
-        val page = executionService.list(ExecutionListParams.builder().machineId("dm-3").build())
+        val page =
+            executionService.list(
+                ExecutionListParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         page.response().validate()
     }
@@ -95,7 +100,7 @@ internal class ExecutionServiceTest {
         val execution =
             executionService.delete(
                 ExecutionDeleteParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .executionId("execution_id")
                     .build()
             )
@@ -115,7 +120,7 @@ internal class ExecutionServiceTest {
         val page =
             executionService.events(
                 ExecutionEventsParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .executionId("execution_id")
                     .build()
             )
@@ -135,7 +140,7 @@ internal class ExecutionServiceTest {
         val executionOutput =
             executionService.output(
                 ExecutionOutputParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .executionId("execution_id")
                     .build()
             )

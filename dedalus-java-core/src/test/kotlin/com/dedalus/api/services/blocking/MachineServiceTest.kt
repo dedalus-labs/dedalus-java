@@ -10,7 +10,6 @@ import com.dedalus.api.models.machines.MachineRetrieveParams
 import com.dedalus.api.models.machines.MachineSleepParams
 import com.dedalus.api.models.machines.MachineUpdateParams
 import com.dedalus.api.models.machines.MachineWakeParams
-import com.dedalus.api.models.machines.MachineWatchParams
 import com.dedalus.api.models.machines.UpdateParams
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,10 +29,10 @@ internal class MachineServiceTest {
         val machine =
             machineService.create(
                 CreateParams.builder()
-                    .memoryMiB(0L)
-                    .storageGiB(0L)
-                    .vcpu(0.0)
                     .autosleep("autosleep")
+                    .memoryMiB(1L)
+                    .storageGiB(1L)
+                    .vcpu(1.0)
                     .build()
             )
 
@@ -50,7 +49,11 @@ internal class MachineServiceTest {
         val machineService = client.machines()
 
         val machine =
-            machineService.retrieve(MachineRetrieveParams.builder().machineId("dm-3").build())
+            machineService.retrieve(
+                MachineRetrieveParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         machine.validate()
     }
@@ -67,7 +70,7 @@ internal class MachineServiceTest {
         val machine =
             machineService.update(
                 MachineUpdateParams.builder()
-                    .machineId("dm-3")
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
                     .updateParams(
                         UpdateParams.builder()
                             .autosleep("autosleep")
@@ -105,7 +108,12 @@ internal class MachineServiceTest {
                 .build()
         val machineService = client.machines()
 
-        val machine = machineService.delete(MachineDeleteParams.builder().machineId("dm-3").build())
+        val machine =
+            machineService.delete(
+                MachineDeleteParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         machine.validate()
     }
@@ -119,7 +127,12 @@ internal class MachineServiceTest {
                 .build()
         val machineService = client.machines()
 
-        val machine = machineService.sleep(MachineSleepParams.builder().machineId("dm-3").build())
+        val machine =
+            machineService.sleep(
+                MachineSleepParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
+            )
 
         machine.validate()
     }
@@ -133,27 +146,13 @@ internal class MachineServiceTest {
                 .build()
         val machineService = client.machines()
 
-        val machine = machineService.wake(MachineWakeParams.builder().machineId("dm-3").build())
-
-        machine.validate()
-    }
-
-    @Test
-    fun watchStreaming() {
-        val client =
-            DedalusOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
-        val machineService = client.machines()
-
-        val machineStreamResponse =
-            machineService.watchStreaming(
-                MachineWatchParams.builder().machineId("dm-3").lastEventId("Last-Event-ID").build()
+        val machine =
+            machineService.wake(
+                MachineWakeParams.builder()
+                    .machineId("dm-ecc2efdd-ddfa-31a9-c6f1-b833d337aa7c")
+                    .build()
             )
 
-        machineStreamResponse.use {
-            machineStreamResponse.stream().forEach { machine -> machine.validate() }
-        }
+        machine.validate()
     }
 }

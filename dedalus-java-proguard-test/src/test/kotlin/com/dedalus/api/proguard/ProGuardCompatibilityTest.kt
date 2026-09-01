@@ -5,8 +5,6 @@ package com.dedalus.api.proguard
 import com.dedalus.api.client.okhttp.DedalusOkHttpClient
 import com.dedalus.api.core.jsonMapper
 import com.dedalus.api.models.machines.CreateParams
-import com.dedalus.api.models.machines.terminals.TerminalClientEvent
-import com.dedalus.api.models.machines.terminals.TerminalInputEvent
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -49,7 +47,6 @@ internal class ProGuardCompatibilityTest {
         val client = DedalusOkHttpClient.builder().apiKey("My API Key").build()
 
         assertThat(client).isNotNull()
-        assertThat(client.usage()).isNotNull()
         assertThat(client.machines()).isNotNull()
     }
 
@@ -58,10 +55,10 @@ internal class ProGuardCompatibilityTest {
         val jsonMapper = jsonMapper()
         val createParams =
             CreateParams.builder()
-                .memoryMiB(0L)
-                .storageGiB(0L)
-                .vcpu(0.0)
                 .autosleep("autosleep")
+                .memoryMiB(1L)
+                .storageGiB(1L)
+                .vcpu(1.0)
                 .build()
 
         val roundtrippedCreateParams =
@@ -71,25 +68,5 @@ internal class ProGuardCompatibilityTest {
             )
 
         assertThat(roundtrippedCreateParams).isEqualTo(createParams)
-    }
-
-    @Test
-    fun terminalClientEventRoundtrip() {
-        val jsonMapper = jsonMapper()
-        val terminalClientEvent =
-            TerminalClientEvent.ofInput(
-                TerminalInputEvent.builder()
-                    .data("U3RhaW5sZXNzIHJvY2tz")
-                    .type(TerminalInputEvent.Type.INPUT)
-                    .build()
-            )
-
-        val roundtrippedTerminalClientEvent =
-            jsonMapper.readValue(
-                jsonMapper.writeValueAsString(terminalClientEvent),
-                jacksonTypeRef<TerminalClientEvent>(),
-            )
-
-        assertThat(roundtrippedTerminalClientEvent).isEqualTo(terminalClientEvent)
     }
 }

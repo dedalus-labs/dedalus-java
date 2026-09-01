@@ -7,19 +7,13 @@ import com.dedalus.api.core.RequestOptions
 import com.dedalus.api.core.handlers.errorBodyHandler
 import com.dedalus.api.core.handlers.errorHandler
 import com.dedalus.api.core.handlers.jsonHandler
-import com.dedalus.api.core.handlers.mapJson
-import com.dedalus.api.core.handlers.sseHandler
-import com.dedalus.api.core.http.AsyncStreamResponse
 import com.dedalus.api.core.http.HttpMethod
 import com.dedalus.api.core.http.HttpRequest
 import com.dedalus.api.core.http.HttpResponse
 import com.dedalus.api.core.http.HttpResponse.Handler
 import com.dedalus.api.core.http.HttpResponseFor
-import com.dedalus.api.core.http.StreamResponse
 import com.dedalus.api.core.http.json
-import com.dedalus.api.core.http.map
 import com.dedalus.api.core.http.parseable
-import com.dedalus.api.core.http.toAsync
 import com.dedalus.api.core.prepareAsync
 import com.dedalus.api.models.machines.Machine
 import com.dedalus.api.models.machines.MachineCreateParams
@@ -28,20 +22,14 @@ import com.dedalus.api.models.machines.MachineList
 import com.dedalus.api.models.machines.MachineListPageAsync
 import com.dedalus.api.models.machines.MachineListParams
 import com.dedalus.api.models.machines.MachineRetrieveParams
+import com.dedalus.api.models.machines.MachineRetrieveResponse
 import com.dedalus.api.models.machines.MachineSleepParams
 import com.dedalus.api.models.machines.MachineUpdateParams
 import com.dedalus.api.models.machines.MachineWakeParams
-import com.dedalus.api.models.machines.MachineWatchParams
-import com.dedalus.api.services.async.machines.ArtifactServiceAsync
-import com.dedalus.api.services.async.machines.ArtifactServiceAsyncImpl
 import com.dedalus.api.services.async.machines.ExecutionServiceAsync
 import com.dedalus.api.services.async.machines.ExecutionServiceAsyncImpl
-import com.dedalus.api.services.async.machines.PreviewServiceAsync
-import com.dedalus.api.services.async.machines.PreviewServiceAsyncImpl
 import com.dedalus.api.services.async.machines.SshServiceAsync
 import com.dedalus.api.services.async.machines.SshServiceAsyncImpl
-import com.dedalus.api.services.async.machines.TerminalServiceAsync
-import com.dedalus.api.services.async.machines.TerminalServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -52,32 +40,20 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
         WithRawResponseImpl(clientOptions)
     }
 
-    private val artifacts: ArtifactServiceAsync by lazy { ArtifactServiceAsyncImpl(clientOptions) }
-
-    private val previews: PreviewServiceAsync by lazy { PreviewServiceAsyncImpl(clientOptions) }
-
     private val ssh: SshServiceAsync by lazy { SshServiceAsyncImpl(clientOptions) }
 
     private val executions: ExecutionServiceAsync by lazy {
         ExecutionServiceAsyncImpl(clientOptions)
     }
 
-    private val terminals: TerminalServiceAsync by lazy { TerminalServiceAsyncImpl(clientOptions) }
-
     override fun withRawResponse(): MachineServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MachineServiceAsync =
         MachineServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun artifacts(): ArtifactServiceAsync = artifacts
-
-    override fun previews(): PreviewServiceAsync = previews
-
     override fun ssh(): SshServiceAsync = ssh
 
     override fun executions(): ExecutionServiceAsync = executions
-
-    override fun terminals(): TerminalServiceAsync = terminals
 
     override fun create(
         params: MachineCreateParams,
@@ -89,7 +65,7 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun retrieve(
         params: MachineRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Machine> =
+    ): CompletableFuture<MachineRetrieveResponse> =
         // get /v1/machines/{machine_id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
@@ -128,29 +104,11 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // post /v1/machines/{machine_id}/wake
         withRawResponse().wake(params, requestOptions).thenApply { it.parse() }
 
-    override fun watchStreaming(
-        params: MachineWatchParams,
-        requestOptions: RequestOptions,
-    ): AsyncStreamResponse<Machine> =
-        // get /v1/machines/{machine_id}/status/stream
-        withRawResponse()
-            .watchStreaming(params, requestOptions)
-            .thenApply { it.parse() }
-            .toAsync(clientOptions.streamHandlerExecutor)
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         MachineServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val artifacts: ArtifactServiceAsync.WithRawResponse by lazy {
-            ArtifactServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val previews: PreviewServiceAsync.WithRawResponse by lazy {
-            PreviewServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val ssh: SshServiceAsync.WithRawResponse by lazy {
             SshServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -160,10 +118,6 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
             ExecutionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val terminals: TerminalServiceAsync.WithRawResponse by lazy {
-            TerminalServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): MachineServiceAsync.WithRawResponse =
@@ -171,15 +125,9 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        override fun artifacts(): ArtifactServiceAsync.WithRawResponse = artifacts
-
-        override fun previews(): PreviewServiceAsync.WithRawResponse = previews
-
         override fun ssh(): SshServiceAsync.WithRawResponse = ssh
 
         override fun executions(): ExecutionServiceAsync.WithRawResponse = executions
-
-        override fun terminals(): TerminalServiceAsync.WithRawResponse = terminals
 
         private val createHandler: Handler<Machine> = jsonHandler<Machine>(clientOptions.jsonMapper)
 
@@ -211,13 +159,13 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveHandler: Handler<Machine> =
-            jsonHandler<Machine>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<MachineRetrieveResponse> =
+            jsonHandler<MachineRetrieveResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: MachineRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<Machine>> {
+        ): CompletableFuture<HttpResponseFor<MachineRetrieveResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -393,39 +341,6 @@ class MachineServiceAsyncImpl internal constructor(private val clientOptions: Cl
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val watchStreamingHandler: Handler<StreamResponse<Machine>> =
-            sseHandler(clientOptions.jsonMapper).mapJson<Machine>()
-
-        override fun watchStreaming(
-            params: MachineWatchParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<StreamResponse<Machine>>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "machines", params._pathParam(0), "status", "stream")
-                    .putHeader("Accept", "text/event-stream")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .let { watchStreamingHandler.handle(it) }
-                            .let { streamResponse ->
-                                if (requestOptions.responseValidation!!) {
-                                    streamResponse.map { it.validate() }
-                                } else {
-                                    streamResponse
                                 }
                             }
                     }

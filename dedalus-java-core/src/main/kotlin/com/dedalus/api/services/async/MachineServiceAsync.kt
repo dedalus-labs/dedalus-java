@@ -4,9 +4,7 @@ package com.dedalus.api.services.async
 
 import com.dedalus.api.core.ClientOptions
 import com.dedalus.api.core.RequestOptions
-import com.dedalus.api.core.http.AsyncStreamResponse
 import com.dedalus.api.core.http.HttpResponseFor
-import com.dedalus.api.core.http.StreamResponse
 import com.dedalus.api.models.machines.CreateParams
 import com.dedalus.api.models.machines.Machine
 import com.dedalus.api.models.machines.MachineCreateParams
@@ -14,16 +12,12 @@ import com.dedalus.api.models.machines.MachineDeleteParams
 import com.dedalus.api.models.machines.MachineListPageAsync
 import com.dedalus.api.models.machines.MachineListParams
 import com.dedalus.api.models.machines.MachineRetrieveParams
+import com.dedalus.api.models.machines.MachineRetrieveResponse
 import com.dedalus.api.models.machines.MachineSleepParams
 import com.dedalus.api.models.machines.MachineUpdateParams
 import com.dedalus.api.models.machines.MachineWakeParams
-import com.dedalus.api.models.machines.MachineWatchParams
-import com.dedalus.api.services.async.machines.ArtifactServiceAsync
 import com.dedalus.api.services.async.machines.ExecutionServiceAsync
-import com.dedalus.api.services.async.machines.PreviewServiceAsync
 import com.dedalus.api.services.async.machines.SshServiceAsync
-import com.dedalus.api.services.async.machines.TerminalServiceAsync
-import com.google.errorprone.annotations.MustBeClosed
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -41,15 +35,9 @@ interface MachineServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): MachineServiceAsync
 
-    fun artifacts(): ArtifactServiceAsync
-
-    fun previews(): PreviewServiceAsync
-
     fun ssh(): SshServiceAsync
 
     fun executions(): ExecutionServiceAsync
-
-    fun terminals(): TerminalServiceAsync
 
     /** Create machine */
     fun create(params: MachineCreateParams): CompletableFuture<Machine> =
@@ -73,14 +61,14 @@ interface MachineServiceAsync {
         create(createParams, RequestOptions.none())
 
     /** Get machine */
-    fun retrieve(params: MachineRetrieveParams): CompletableFuture<Machine> =
+    fun retrieve(params: MachineRetrieveParams): CompletableFuture<MachineRetrieveResponse> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: MachineRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Machine>
+    ): CompletableFuture<MachineRetrieveResponse>
 
     /** Update machine */
     fun update(params: MachineUpdateParams): CompletableFuture<Machine> =
@@ -141,20 +129,6 @@ interface MachineServiceAsync {
     ): CompletableFuture<Machine>
 
     /**
-     * Streams machine lifecycle updates over Server-Sent Events. Each `status` event contains a
-     * full `LifecycleResponse` payload. The stream closes after the machine reaches its current
-     * desired state.
-     */
-    fun watchStreaming(params: MachineWatchParams): AsyncStreamResponse<Machine> =
-        watchStreaming(params, RequestOptions.none())
-
-    /** @see watchStreaming */
-    fun watchStreaming(
-        params: MachineWatchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): AsyncStreamResponse<Machine>
-
-    /**
      * A view of [MachineServiceAsync] that provides access to raw HTTP responses for each method.
      */
     interface WithRawResponse {
@@ -168,15 +142,9 @@ interface MachineServiceAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): MachineServiceAsync.WithRawResponse
 
-        fun artifacts(): ArtifactServiceAsync.WithRawResponse
-
-        fun previews(): PreviewServiceAsync.WithRawResponse
-
         fun ssh(): SshServiceAsync.WithRawResponse
 
         fun executions(): ExecutionServiceAsync.WithRawResponse
-
-        fun terminals(): TerminalServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /v1/machines`, but is otherwise the same as
@@ -206,14 +174,16 @@ interface MachineServiceAsync {
          * Returns a raw HTTP response for `get /v1/machines/{machine_id}`, but is otherwise the
          * same as [MachineServiceAsync.retrieve].
          */
-        fun retrieve(params: MachineRetrieveParams): CompletableFuture<HttpResponseFor<Machine>> =
+        fun retrieve(
+            params: MachineRetrieveParams
+        ): CompletableFuture<HttpResponseFor<MachineRetrieveResponse>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: MachineRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<Machine>>
+        ): CompletableFuture<HttpResponseFor<MachineRetrieveResponse>>
 
         /**
          * Returns a raw HTTP response for `patch /v1/machines/{machine_id}`, but is otherwise the
@@ -291,22 +261,5 @@ interface MachineServiceAsync {
             params: MachineWakeParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Machine>>
-
-        /**
-         * Returns a raw HTTP response for `get /v1/machines/{machine_id}/status/stream`, but is
-         * otherwise the same as [MachineServiceAsync.watchStreaming].
-         */
-        @MustBeClosed
-        fun watchStreaming(
-            params: MachineWatchParams
-        ): CompletableFuture<HttpResponseFor<StreamResponse<Machine>>> =
-            watchStreaming(params, RequestOptions.none())
-
-        /** @see watchStreaming */
-        @MustBeClosed
-        fun watchStreaming(
-            params: MachineWatchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<StreamResponse<Machine>>>
     }
 }
